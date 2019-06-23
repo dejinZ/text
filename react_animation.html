@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>react_refs</title>
+		<script src="https://cdn.staticfile.org/react/16.4.0/umd/react.development.js"></script>
+		<script src="https://cdn.staticfile.org/react-dom/16.4.0/umd/react-dom.development.js"></script>
+		<script src="https://cdn.staticfile.org/babel-standalone/6.26.0/babel.min.js"></script>
+		<style>
+			.input{
+				width: 120px;
+				height: 25px;
+				padding: 5px;
+				font-size: 16px;
+				border: none;
+				outline: none;
+				border-radius: 5px;
+				background-color: #d5d5d5;
+				transition: width 0.35s linear
+				
+			}
+			.input_focus{
+				width: 180px;
+				background-color: #dddddd;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="root"></div>
+		<script type="text/babel">
+			class InputComponent1 extends React.Component{
+				 constructor(props) {
+					super(props);
+					this.state = {focused: false};
+					this.focus = this.focus.bind(this);
+					this.blur = this.blur.bind(this);
+				}
+				
+				componentDidMount(){
+					this.input.addEventListener('focus',this.focus);  //addEventListener('事件名'，'触发了对应事件时所要执行的函数')
+					this.input.addEventListener('blur',this.blur);
+				}
+				
+				focus(){this.setState({focused: true});}
+				blur(){this.setState({focused: false});}
+				
+				render(){
+					return(
+						<div>
+							<input type="text" ref={input => this.input = input} className={this.state.focused ? 'input input_focus' : 'input'} />
+							<InputComponent2 />
+						</div>
+					)
+				}
+			}
+			
+			{/**写法二**/}
+			class InputComponent2 extends React.Component{
+				constructor(props){
+					super(props);
+					this.state = {focused: false}
+				}
+				
+				componentDidMount(){
+					this.input.addEventListener('focus',this.focus);
+					this.input.addEventListener('blur',this.focus);
+				}
+				
+				focus = () =>{
+					this.setState((state)=>({focused: !state.focused}));
+				}
+				
+				render(){
+					return(
+						<div style={{marginTop: "20px"}}>
+							<input type="text" ref={input => this.input = input} className={['input', this.state.focused && 'input_focus'].join(' ')} />
+						</div>
+					)
+					
+				}
+			}
+			
+			ReactDOM.render(
+				<InputComponent1 />,
+				document.getElementById("root")
+			)
+		</script>
+		
+	</body>
+</html>
